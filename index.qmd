@@ -59,14 +59,12 @@ house$Date=as.Date(house$Date,"%y-%m-%d")
 house=house %>% drop_na()
 ```
 
-
 *Format MAP*
 
 ```{r}
 #Use left_join to combine data
 us_states_house <- map_data("state")
 House = left_join(us_states_house,house, by = c("region"= "state"))
-
 ## Categorize annual average data
 median_listing_price = House %>%
   group_by(region, state_id) %>%
@@ -96,10 +94,26 @@ p_house_1 <- p_house_1 + theme_minimal()
 p_house_1 <- p_house_1 + theme(axis.title = element_blank(),
                      legend.position = c(0.9,0.2))
 p_house_1 <- p_house_1 + ggtitle(expression(paste('Median listing price in the USA')))
+
+```
+
+
+*Save MAP as pdf*
+
+```{r}
+pdf("MAP_1.pdf", height=4, width=6)
+print(p_house_1)
+dev.off()
+```
+
+*Display Figure in HTML*
+
+```{r}
 p_house_1
 ```
 
-**Dynamic Maps with leaflet*
+
+*Dynamic Maps with leaflet*
 
 ```{r}
 library(leafpop)
@@ -130,6 +144,20 @@ p_pm_popuptable <- leaflet(median_listing_price) %>%
                                       row.numbers=FALSE,
                                       feature.id=FALSE),
                    icon=icons)
+```
+
+
+*Save MAP as pdf*
+
+```{r}
+pdf("MAP_2.pdf", height=4, width=6)
+print(p_pm_popuptable)
+dev.off()
+```
+
+*Display Figure in HTML*
+
+```{r}
 p_pm_popuptable
 ```
 
