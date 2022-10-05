@@ -93,10 +93,23 @@ p_house_1 <- p_house_1 + theme_minimal()
 p_house_1 <- p_house_1 + theme(axis.title = element_blank(),
                                legend.position = c(0.9,0.2))
 p_house_1 <- p_house_1 + ggtitle(expression(paste('Median listing price in the USA')))
-p_house_1
+
 ```
 
 
+*Save MAP as pdf*
+
+```{r}
+pdf("MAP_1.pdf", height=4, width=6)
+print(p_house_1)
+dev.off()
+```
+
+*Display Figure in HTML*
+
+```{r}
+p_house_1
+```
 
 
 *Dynamic Maps with leaflet*
@@ -132,6 +145,19 @@ p_pm_popuptable <- leaflet(median_listing_price) %>%
                      row.numbers=FALSE,
                      feature.id=FALSE),
   icon=icons)
+```
 
+
+*Save MAP as pdf*
+
+```{r}
+pdf("MAP_2.pdf", height=4, width=6)
+dev.off()
+```
+
+*Display Figure in HTML*
+
+```{r}
 p_pm_popuptable
 ```
+
