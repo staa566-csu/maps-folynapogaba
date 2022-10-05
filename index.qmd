@@ -1,7 +1,9 @@
 ---
 title: "MAP ASSIGNMENT"
 author: "GABA FOLLY NAPO"
-format: html
+format: 
+  html:
+    self-contained: false
 editor: visual
 ---
 
@@ -13,11 +15,9 @@ Quarto enables you to weave together content and executable code into a finished
 
 When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
-
 
 ```{r}
 library(tidyverse)
@@ -38,15 +38,11 @@ library(tigris)
 library(leaflet)
 ```
 
-
-
 *Description of the data and data source*
 
 For this assignment we use the data produces by the National Association of Realtors (NAR). NAR produces housing statistics on the national, regional, and metro-marketlevel where data is available. we use the national historical data (view US data) on https://www.realtor.com/research/data/ (Data from 2016 to 2022)
 
-
-*what you are trying to communicate*
-Through the MAP we want to show how the median listing price vary from state to state.
+*what you are trying to communicate* Through the MAP we want to show how the median listing price vary from state to state.
 
 *what decisions you made and why you made those to best communicate the data*
 
@@ -59,9 +55,6 @@ house$Date=anydate(house$Date)
 house$Date=as.Date(house$Date,"%y-%m-%d")
 house=house %>% drop_na()
 ```
-
-
-
 
 *Format MAP*
 
@@ -103,7 +96,6 @@ p_house_1 <- p_house_1 + ggtitle(expression(paste('Median listing price in the U
 p_house_1
 ```
 
-
 *Dynamic Maps with leaflet*
 
 ```{r}
@@ -140,4 +132,3 @@ p_pm_popuptable <- leaflet(median_listing_price) %>%
 
 p_pm_popuptable
 ```
-
