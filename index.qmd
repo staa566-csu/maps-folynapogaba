@@ -1,0 +1,143 @@
+---
+title: "MAP ASSIGNMENT"
+author: "GABA FOLLY NAPO"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(plotly)
+library(htmlwidgets)
+library(dygraphs)
+library(dplyr)
+library(lubridate, warn.conflicts = FALSE)
+library(anytime)
+library(xts)
+library(rworldmap)
+library(sf)
+library(rgeos)
+library(ggdendro)
+library(viridis)
+library(tigris)
+library(leaflet)
+```
+
+
+
+*Description of the data and data source*
+
+For this assignment we use the data produces by the National Association of Realtors (NAR). NAR produces housing statistics on the national, regional, and metro-marketlevel where data is available. we use the national historical data (view US data) on https://www.realtor.com/research/data/ (Data from 2016 to 2022)
+
+
+*what you are trying to communicate*
+Through the MAP we want to show how the median listing price vary from state to state.
+
+*what decisions you made and why you made those to best communicate the data*
+
+I made decision to create MAP with plotly, Add points to the map and also create dynamic MAP with leaflet (Add popup table). I chose those MAP, its help me to display additional information including data values and tables.
+
+```{r}
+house= read.csv("C:/Users/L/OneDrive/Bureau/STAA 566/MAP/RDC_Inventory_Core_Metrics_State_History.csv",header = TRUE)
+house=house%>% rename(Date=month_date_yyyymm)
+house$Date=anydate(house$Date)
+house$Date=as.Date(house$Date,"%y-%m-%d")
+house=house %>% drop_na()
+```
+
+
+
+
+*Format MAP*
+
+```{r}
+
+#Use left_join to combine data
+us_states_house <- map_data("state")
+House = left_join(us_states_house,house, by = c("region"= "state"))
+
+## Categorize annual average data
+median_listing_price = House %>%
+  group_by(region, state_id) %>%
+  summarise(median_listing_price=mean(median_listing_price),
+            Latitude=mean(lat),
+            Longitude=mean(long)) %>%
+  mutate(Median_listing = ifelse(median_listing_price<296500,"A",
+                                 ifelse(median_listing_price<364990,"B",
+                                        "C")))
+## Make US outline
+p_house_1 <- ggplot()
+p_house_1 <- p_house_1 + geom_polygon(data = map_data("state"),
+                                      mapping = aes(x = long, y = lat,
+                                                    group = group),
+                                      color="black", fill=NA)
+## Add points
+p_house_1 <- p_house_1 + geom_point(data=median_listing_price,
+                                    aes(x=Longitude,
+                                        y=Latitude,
+                                        color=Median_listing))
+##Format legend
+p_house_1 <- p_house_1 + guides(color=guide_legend(title=expression(paste("Median listing price",'($)'))))
+p_house_1<- p_house_1 + scale_color_manual(values = c("green", "yellow", "red"),
+                                           labels = c("<296500","296500-364990","\u2265 364990"))
+
+p_house_1 <- p_house_1 + theme_minimal()
+p_house_1 <- p_house_1 + theme(axis.title = element_blank(),
+                               legend.position = c(0.9,0.2))
+p_house_1 <- p_house_1 + ggtitle(expression(paste('Median listing price in the USA')))
+p_house_1
+```
+
+
+*Dynamic Maps with leaflet*
+
+```{r}
+library(leafpop)
+# Function to assign colors
+make_color <- function(x) {
+  sapply(x$median_listing_price,function(y) {
+    if(y <= 296500) {
+      "green"
+      } else if(y <= 364990) {
+        "orange"
+    } else {
+      "red"
+    } })
+}
+
+# create icon format
+icons <- awesomeIcons(
+  icon = 'ios-close',
+  iconColor = 'black',
+  library = 'fa',
+  text=round(median_listing_price$median_listing_price),
+markerColor = make_color(median_listing_price)
+)
+
+## Add popup table
+p_pm_popuptable <- leaflet(median_listing_price) %>%
+  addTiles() %>%
+  addAwesomeMarkers(~Longitude, ~Latitude,
+  popup = popupTable(median_listing_price[,c("region","state_id","median_listing_price")],
+                     row.numbers=FALSE,
+                     feature.id=FALSE),
+  icon=icons)
+
+p_pm_popuptable
+```
+
