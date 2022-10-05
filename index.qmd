@@ -96,6 +96,9 @@ p_house_1 <- p_house_1 + ggtitle(expression(paste('Median listing price in the U
 p_house_1
 ```
 
+
+
+
 *Dynamic Maps with leaflet*
 
 ```{r}
