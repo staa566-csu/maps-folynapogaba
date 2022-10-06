@@ -3,7 +3,7 @@ title: "MAP ASSIGNMENT"
 author: "GABA FOLLY NAPO"
 format: 
   html:
-    self-contained: false
+    self-contained: true
 editor: visual
 ---
 
@@ -96,7 +96,6 @@ p_house_1 <- p_house_1 + ggtitle(expression(paste('Median listing price in the U
 
 ```
 
-
 *Save MAP as pdf*
 
 ```{r}
@@ -110,7 +109,6 @@ dev.off()
 ```{r}
 p_house_1
 ```
-
 
 *Dynamic Maps with leaflet*
 
@@ -147,7 +145,6 @@ p_pm_popuptable <- leaflet(median_listing_price) %>%
   icon=icons)
 ```
 
-
 *Save MAP as pdf*
 
 ```{r}
@@ -160,4 +157,3 @@ dev.off()
 ```{r}
 p_pm_popuptable
 ```
-
